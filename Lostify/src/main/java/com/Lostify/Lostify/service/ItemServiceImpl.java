@@ -1,4 +1,4 @@
-package com.Lostify.Lostify.config;
+package com.Lostify.Lostify.service;
 
 import com.Lostify.Lostify.model.Item;
 import com.Lostify.Lostify.domain.ItemCategory;
@@ -9,6 +9,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -26,6 +27,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public Item reportLostItem(Item item) {
         item.setStatus(ItemStatus.LOST);
+        item.setDateReported(LocalDate.now());
         return itemRepository.save(item);
     }
 
@@ -35,6 +37,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public Item reportFoundItem(Item item) {
         item.setStatus(ItemStatus.FOUND);
+        item.setDateReported(LocalDate.now());
         return itemRepository.save(item);
     }
 
