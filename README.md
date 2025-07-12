@@ -105,12 +105,8 @@ Contributions are welcome! Please open an issue or submit a pull request for any
 
 ---
 
-## License
 
-This project is licensed under the MIT License.
-
----
 
 ## Contact
 
-For questions or support, please contact the maintainer at [your-email@example.com]. 
+For questions or support, please contact the maintainer at jashchauhan015@gmail.com. 
