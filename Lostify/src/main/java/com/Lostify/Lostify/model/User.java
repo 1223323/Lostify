@@ -2,6 +2,7 @@ package com.Lostify.Lostify.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 @Entity
@@ -20,10 +21,14 @@ public class User {
     private String username;
 
     @Column(nullable = false)
+    @JsonIgnore
     private String password;
 
     @Column(nullable = false, unique = true)
     private String email;
+
+    @Column(length = 15)
+    private String phoneNumber;
 
     @Column(nullable = false)
     private String roles;

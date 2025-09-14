@@ -7,9 +7,9 @@ import com.Lostify.Lostify.model.Item;
 
 public interface ItemService {
 
-    Item reportLostItem(Item item);
+    Item reportLostItem(Item item, Long universityId);
 
-    Item reportFoundItem(Item item);
+    Item reportFoundItem(Item item, Long universityId);
 
     List<Item> getAllItems();
 
@@ -22,7 +22,22 @@ public interface ItemService {
     List<Item> getItemsByStatus(ItemStatus status);
 
     List<Item> getItemsByCategory(String category);
+    
+    List<Item> getItemsByCategoryAndStatus(String category, ItemStatus status);
 
     List<Item> getItemsByLocation(String location);
+
+    List<Item> getFoundItemSuggestions(String description);
+
+    List<Item> getLostItemSuggestions(String description);
+    
+    // University-based methods
+    List<Item> getItemsByUniversityId(Long universityId);
+    
+    List<Item> getItemsByUniversityIdAndCategory(Long universityId, String category);
+    
+    List<Item> getItemsByUniversityIdAndStatus(Long universityId, ItemStatus status);
+    
+    List<Item> getItemsByUniversityIdAndCategoryAndStatus(Long universityId, String category, ItemStatus status);
 }
 

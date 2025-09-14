@@ -1,99 +1,117 @@
 import React, { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import { AuthContext } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
-import '../styles/SubmitItem.css';
-// 1. Import the location icon
-import { FaBoxOpen, FaTag, FaAlignLeft, FaMapMarkerAlt } from 'react-icons/fa';
+import { UniversityContext } from '../context/UniversityContext';
+import ItemForm from '../components/ItemForm';
+import { FaCheckCircle } from 'react-icons/fa';
+import styled, { keyframes } from 'styled-components';
 
-const categories = [
-  'ELECTRONICS', 'BOOKS', 'APPAREL', 'ACCESSORIES', 'DOCUMENTS', 'OTHER'
-];
+// Animation for success message
+const fadeIn = keyframes`
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+`;
+
+const SuccessContainer = styled.div`
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  animation: ${fadeIn} 0.5s ease-out;
+`;
+
+const SuccessIcon = styled.div`
+  font-size: 4rem;
+  color: #4caf50;
+  margin-bottom: 1.5rem;
+`;
+
+const SuccessTitle = styled.h2`
+  color: #2e7d32;
+  margin-bottom: 1rem;
+`;
+
+const SuccessMessage = styled.p`
+  color: #4a4a4a;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+  box-shadow: 0 0 0 2px rgba(229, 115, 115, 0.2);
+`;
 
 const SubmitLostItem = () => {
-  const { token } = useContext(AuthContext);
-  const [name, setName] = useState('');
-  const [category, setCategory] = useState('');
-  const [description, setDescription] = useState('');
-  // 2. Add state for location
-  const [location, setLocation] = useState('');
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  
+  // const { user } = useContext(AuthContext); // Not needed since we're using FormData
+  const { selectedUniversityId } = useContext(UniversityContext);
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (formData) => {
     setError('');
-    // 3. Add location to the validation check
-    if (!name || !category || !description || !location) {
-      setError('Please fill in all fields.');
-      return;
-    }
+    
     try {
-      // 4. Add location to the API post request
-      await api.post('/api/items/lost', { name, category, description, location });
-      setSuccess(true);
+      setIsSubmitting(true);
+      
+      // Submit the lost item with photos
+      const response = await api.post('/api/items/lost', formData);
+      setIsSuccess(true);
+      
+      // Redirect to items list after a short delay
       setTimeout(() => {
-        setSuccess(false);
         navigate('/items');
-      }, 1800);
+      }, 2000);
+      
     } catch (err) {
-      setError('Failed to submit lost item.');
+      console.error('Error submitting lost item:', err);
+      
+      // More detailed error handling
+      if (err.response?.status === 401) {
+        setError('Authentication failed. Please log in again.');
+      } else if (err.response?.status === 403) {
+        setError('You do not have permission to perform this action.');
+      } else if (err.response?.status === 400) {
+        setError(err.response?.data?.message || 'Invalid form data. Please check your inputs.');
+      } else {
+        setError(err.response?.data?.message || 'Failed to submit lost item. Please try again.');
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
+  if (isSuccess) {
+    return (
+      <SuccessContainer>
+        <SuccessIcon>
+          <FaCheckCircle />
+        </SuccessIcon>
+        <SuccessTitle>Report Submitted Successfully!</SuccessTitle>
+        <SuccessMessage>
+          Your lost item has been reported. We'll help you find it!
+          <br />
+          Redirecting to items list...
+        </SuccessMessage>
+      </SuccessContainer>
+    );
+  }
+
   return (
-    <div className="submit-bg">
-      <div className="submit-hero lost">
-        <FaBoxOpen className="submit-hero-icon" />
-        <h2>Report a Lost Item</h2>
-        <p>Help us reunite you with your belongings. Fill out the details below.</p>
-      </div>
-      <form className="submit-form" onSubmit={handleSubmit}>
-        {error && <div className="submit-error">{error}</div>}
-        <div className="submit-field">
-          <FaBoxOpen className="submit-icon" />
-          <input
-            type="text"
-            placeholder="Item Name"
-            value={name}
-            onChange={e => setName(e.target.value)}
-            required
-          />
-        </div>
-        <div className="submit-field">
-          <FaTag className="submit-icon" />
-          <select value={category} onChange={e => setCategory(e.target.value)} required>
-            <option value="">Select Category</option>
-            {categories.map(cat => (
-              <option key={cat} value={cat}>{cat.charAt(0) + cat.slice(1).toLowerCase()}</option>
-            ))}
-          </select>
-        </div>
-        <div className="submit-field">
-          <FaAlignLeft className="submit-icon" />
-          <textarea
-            placeholder="Description"
-            value={description}
-            onChange={e => setDescription(e.target.value)}
-            required
-          />
-        </div>
-        {/* 5. Add the input field for location to the form */}
-        <div className="submit-field">
-          <FaMapMarkerAlt className="submit-icon" />
-          <input
-            type="text"
-            placeholder="Last Known Location"
-            value={location}
-            onChange={e => setLocation(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit" className="submit-btn lost">Submit Lost Item</button>
-      </form>
-      {success && <div className="submit-success-modal">Lost item reported! Redirecting...</div>}
-    </div>
+    <ItemForm
+      type="lost"
+      onSubmit={handleSubmit}
+      loading={isSubmitting}
+      error={error}
+      success={isSuccess}
+      successMessage="Your lost item has been reported successfully!"
+      initialValues={{
+        universityId: selectedUniversityId || ''
+      }}
+    />
   );
 };
 
