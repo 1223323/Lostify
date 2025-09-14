@@ -2,7 +2,6 @@ import React, { useEffect, useState, useContext } from 'react';
 import api from '../utils/api';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { FaSearch, FaFilter } from 'react-icons/fa';
 import '../styles/ItemsList.css';
 
 const statusColors = {
@@ -47,72 +46,64 @@ const ItemsList = () => {
 
   return (
     <div className="dashboard-bg">
-      <header className="dashboard-header">
-        <h1>Dashboard</h1>
-        <p>Track and manage all lost and found items.</p>
-      </header>
-
-      <section className="dashboard-stats">
-        <div className="stat-card">
-          <span>{stats.LOST}</span>
-          <p>Lost Items</p>
+      <section className="dashboard-hero">
+        <h1>Lost & Found Dashboard</h1>
+        <p>Search, report, and manage lost and found items in your community.</p>
+        <div className="dashboard-stats">
+          <div className="stat-card" style={{background:'#e3f2fd'}}>
+            <span className="stat-num" style={{color:'#1976d2'}}>{stats.LOST}</span>
+            <span className="stat-label">Lost</span>
+          </div>
+          <div className="stat-card" style={{background:'#e8f5e9'}}>
+            <span className="stat-num" style={{color:'#388e3c'}}>{stats.FOUND}</span>
+            <span className="stat-label">Found</span>
+          </div>
+          <div className="stat-card" style={{background:'#fffde7'}}>
+            <span className="stat-num" style={{color:'#fbc02d'}}>{stats.RETURNED}</span>
+            <span className="stat-label">Returned</span>
+          </div>
         </div>
-        <div className="stat-card">
-          <span>{stats.FOUND}</span>
-          <p>Found Items</p>
+        <div className="dashboard-actions">
+          <button onClick={() => navigate('/items/lost')} className="dashboard-btn dashboard-btn-lost">Report Lost Item</button>
+          <button onClick={() => navigate('/items/found')} className="dashboard-btn dashboard-btn-found">Report Found Item</button>
         </div>
-        <div className="stat-card">
-          <span>{stats.RETURNED}</span>
-          <p>Returned Items</p>
-        </div>
-      </section>
-
-      <section className="dashboard-controls">
-        <div className="search-bar">
-          <FaSearch />
+        <div className="dashboard-search-filter">
           <input
             type="text"
-            placeholder="Search by name or description..."
+            placeholder="Search items..."
             value={search}
             onChange={e => setSearch(e.target.value)}
+            className="dashboard-search"
           />
-        </div>
-        <div className="filter-bar">
-          <FaFilter />
-          <select value={filter} onChange={e => setFilter(e.target.value)}>
-            <option value="ALL">All Statuses</option>
+          <select value={filter} onChange={e => setFilter(e.target.value)} className="dashboard-filter">
+            <option value="ALL">All</option>
             <option value="LOST">Lost</option>
             <option value="FOUND">Found</option>
             <option value="RETURNED">Returned</option>
           </select>
         </div>
       </section>
-
       <section className="items-list-section">
-        <h2>Reported Items</h2>
         {loading ? (
-          <div className="items-loading">Loading items...</div>
+          <div className="items-loading">Loading...</div>
         ) : filteredItems.length === 0 ? (
-          <div className="items-empty">No items match your criteria.</div>
+          <div className="items-empty">No items found.</div>
         ) : (
-          <div className="items-grid">
+          <div className="items-list-animated">
             {filteredItems.map(item => (
               <div
                 key={item.id}
-                className="item-card"
+                className="item-card-animated"
+                style={{ borderColor: statusColors[item.status] || '#1976d2' }}
                 onClick={() => navigate(`/items/${item.id}`)}
               >
-                <div className="item-card-header" style={{ borderTopColor: statusColors[item.status] || '#1976d2' }}>
-                  <h3>{item.name}</h3>
-                  <span className="item-status" style={{ backgroundColor: statusColors[item.status] || '#1976d2' }}>
-                    {item.status}
-                  </span>
+                <div className="item-card-header">
+                  <span className="item-status-badge" style={{background: statusColors[item.status] || '#1976d2'}}>{item.status}</span>
+                  <span className="item-category">{item.category}</span>
                 </div>
-                <p>{item.description}</p>
-                <div className="item-card-footer">
-                  <span>{item.category}</span>
-                  <span>{item.dateReported}</span>
-                </div>
+                <h3>{item.name}</h3>
+                <p className="item-desc">{item.description}</p>
+                <div className="item-date">Reported: {item.dateReported}</div>
               </div>
             ))}
           </div>

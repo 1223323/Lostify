@@ -1,7 +1,7 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
-import Layout from './components/Layout';
+import Navbar from './components/Navbar';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ItemsList from './pages/ItemsList';
@@ -9,8 +9,6 @@ import ItemDetail from './pages/ItemDetail';
 import SubmitLostItem from './pages/SubmitLostItem';
 import SubmitFoundItem from './pages/SubmitFoundItem';
 import LandingPage from './pages/LandingPage';
-import Home from './pages/Home';
-import NotFound from './pages/NotFound';
 import './App.css';
 
 function App() {
@@ -18,15 +16,14 @@ function App() {
     <AuthProvider>
       <Router>
         <Routes>
-          <Route path="/" element={<Layout><LandingPage /></Layout>} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/home" element={<Layout><Home /></Layout>} />
-          <Route path="/items" element={<Layout><ItemsList /></Layout>} />
-          <Route path="/items/lost" element={<Layout><SubmitLostItem /></Layout>} />
-          <Route path="/items/found" element={<Layout><SubmitFoundItem /></Layout>} />
-          <Route path="/items/:id" element={<Layout><ItemDetail /></Layout>} />
-          <Route path="*" element={<Layout><NotFound /></Layout>} />
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<><Navbar /><Login /></>} />
+          <Route path="/register" element={<><Navbar /><Register /></>} />
+          <Route path="/items" element={<><Navbar /><ItemsList /></>} />
+          <Route path="/items/lost" element={<><Navbar /><SubmitLostItem /></>} />
+          <Route path="/items/found" element={<><Navbar /><SubmitFoundItem /></>} />
+          <Route path="/items/:id" element={<><Navbar /><ItemDetail /></>} />
+          <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </Router>
     </AuthProvider>

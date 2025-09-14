@@ -1,12 +1,57 @@
-/* Reset and base styles */
+/* Inter font for a modern, clean look */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
 :root {
-  --primary-color: #1976d2;
-  --secondary-color: #f50057;
-  --background-color: #f9f9f9;
-  --text-color: #333;
-  --font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  /* 1. Color Palette */
+  --primary-brand: #1976d2;
+  --primary-dark: #1565c0;
+  --primary-light: #e3f2fd;
+
+  --status-lost: #e57373;
+  --status-lost-bg: #ffebee;
+  --status-found: #64b5f6;
+  --status-found-bg: #e3f2fd;
+  --status-returned: #81c784;
+  --status-returned-bg: #e8f5e9;
+
+  --text-primary: #121212;
+  --text-secondary: #555555;
+  --text-on-brand: #ffffff;
+  
+  --surface-bg: #ffffff;
+  --app-bg: #f7f9fc; /* Use a slightly off-white for the main app background */
+  --border-color: #dbe4f0;
+
+  /* 2. Typography */
+  --font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --fs-xl: 2.5rem;
+  --fs-lg: 1.75rem;
+  --fs-md: 1.1rem;
+  --fs-body: 1rem;
+  --fs-sm: 0.9rem;
+  --fw-bold: 700;
+  --fw-semibold: 600;
+  --fw-medium: 500;
+
+  /* 3. Spacing & Sizing */
+  --spacing-1: 0.25rem;
+  --spacing-2: 0.5rem;
+  --spacing-3: 0.75rem;
+  --spacing-4: 1rem;
+  --spacing-5: 1.5rem;
+  --spacing-6: 2rem;
+  --spacing-7: 2.5rem;
+
+  /* 4. Borders & Shadows */
+  --border-radius-sm: 6px;
+  --border-radius-md: 10px;
+  --border-radius-lg: 16px;
+  --shadow-sm: 0 2px 4px rgba(0, 40, 128, 0.05);
+  --shadow-md: 0 4px 12px rgba(0, 40, 128, 0.1);
+  --shadow-lg: 0 8px 24px rgba(0, 40, 128, 0.12);
 }
 
+/* Global Resets & Defaults */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -15,23 +60,11 @@
 
 body {
   font-family: var(--font-family);
-  background-color: var(--background-color);
-  color: var(--text-color);
+  background-color: var(--app-bg);
+  color: var(--text-primary);
 }
 
 a {
   text-decoration: none;
   color: inherit;
-}
-
-button {
-  cursor: pointer;
-  font-family: var(--font-family);
-}
-
-/* Utility classes */
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1rem;
 }
